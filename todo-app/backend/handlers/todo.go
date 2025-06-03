@@ -11,7 +11,7 @@ import (
 )
 
 func GetTodos(c *gin.Context) {
-	rows, err := database.DB.Query("SELECT id, title, completed, create_at, updated_at FROM todos")
+	rows, err := database.DB.Query("SELECT id, title, completed, created_at, updated_at FROM todos")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

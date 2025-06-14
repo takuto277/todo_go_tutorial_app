@@ -1,6 +1,7 @@
 'use client';
 
 import { Todo } from '@/types/todo';
+import { updateTodo, deleteTodo } from '@/lib/api';
 
 interface TodoItemProps {
     todo: Todo;
@@ -11,27 +12,20 @@ interface TodoItemProps {
 export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
     const toggleComplete = async () => {
         try {
-            await fetch(`http://localhost:8080/todos/${todo.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...todo,
-                    completed: !todo.completed,
-                }),
-            });
+            const updatedTodo = {
+                ...todo,
+                completed: !todo.completed,
+            };
+            await updateTodo(updatedTodo);
             onUpdate();
         } catch (error) {
             console.error('Error updating todo:', error);
         }
     };
 
-    const deleteTodo = async () => {
+    const handleDelete = async () => {
         try {
-            await fetch(`http://localhost:8080/todos/${todo.id}`, {
-                method: 'DELETE',
-            });
+            await deleteTodo(Number(todo.id));
             onDelete();
         } catch (error) {
             console.error('Error deleting todo:', error);
@@ -53,7 +47,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
                     </span>
                 </div>
                 <button
-                    onClick={deleteTodo}
+                    onClick={handleDelete}
                     className="px-2 py-1 text-red-600 hover:bg-red-100 rounded"
                     >
                     削除

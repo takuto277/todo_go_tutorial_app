@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import TodoItem from './todoItem';
 import TodoForm from './todoForm';
 import { Todo } from '@/types/todo';
+import { getTodos } from '@/lib/api';
 
 export default function TodoList() {
     const [todos, setTodos] = useState<Todo[]>([]);
@@ -14,8 +15,7 @@ export default function TodoList() {
 
     const fetchTodos = async () => {
         try {
-            const response = await fetch('http://localhost:8080/todos');
-            const data = await response.json();
+            const data = await getTodos();
             setTodos(data || []);
         } catch (error) {
             console.error('Error fetching todos:', error);

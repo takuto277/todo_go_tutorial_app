@@ -1,7 +1,7 @@
 `use client`
 
 import { useState } from 'react';
-
+import { createTodo } from '@/lib/api';
 interface TodoFormProps {
     onAdd: () => void;
 }
@@ -15,16 +15,7 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
         if (!title.trim()) return;
 
         try {
-            await fetch('http://localhost:8080/todos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    title,
-                    description
-                 }),
-            });
+            await createTodo(title, description);
             setTitle('');
             setDescription('');
             onAdd();

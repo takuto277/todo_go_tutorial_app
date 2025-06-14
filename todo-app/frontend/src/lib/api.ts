@@ -12,13 +12,16 @@ export const getTodos = async () => {
     return response.json();
 };
 
-export const createTodo = async (title: string): Promise<Todo> => {
+export const createTodo = async (title: string, description: string): Promise<Todo> => {
     const response = await fetch(`${API_BASE_URL}/todos`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ 
+            title,
+            description
+        }),
     });
     if (!response.ok) {
         throw new Error('Failed to create todo');

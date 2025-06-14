@@ -16,9 +16,10 @@ export default function TodoList() {
         try {
             const response = await fetch('http://localhost:8080/todos');
             const data = await response.json();
-            setTodos(data);
+            setTodos(data || []);
         } catch (error) {
             console.error('Error fetching todos:', error);
+            setTodos([]);
         }
     };
 

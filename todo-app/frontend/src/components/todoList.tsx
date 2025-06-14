@@ -27,14 +27,14 @@ export default function TodoList() {
             <h1 className="text-2xl font-bold mb-4">Todo List</h1>
             <TodoForm onAdd={fetchTodos} />
             <div className="mt-4">
-                {todos.map((todo) => {
+                {todos.map((todo) => (
                     <TodoItem
                         key={todo.id}
                         todo={todo}
                         onUpdate={fetchTodos}
                         onDelete={fetchTodos}
                     />
-                })}
+                ))}
             </div>
         </div>
     );

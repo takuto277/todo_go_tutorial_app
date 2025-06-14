@@ -9,12 +9,12 @@ interface TodoItemProps {
 }
 
 export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
-    const toggleComplete = () => {
+    const toggleComplete = async () => {
         try {
             await fetch(`http:/localhost:8080/todo/${todo.id}`, {
                 method: 'PUT',
-                header: {
-                    `Content-Type`: 'application/json',
+                headers: {
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     ...todo,

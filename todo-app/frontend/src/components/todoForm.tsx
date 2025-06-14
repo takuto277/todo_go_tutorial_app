@@ -35,7 +35,7 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Add a new todo"
-                className="flex-1 p-2 border border-gray-300 rounded"
+                className="flex-1 p-2 border border-gray-300 rounded text-black"
             />
             <button
                 type="submit"

@@ -24,7 +24,7 @@ export default function TodoList() {
 
     return (
         <div className="max-w-md mx-auto mt-8">
-            <h1 className="text-2xl font-bold mb-4">Todo List</h1>
+            <h1 className="text-2xl text-black font-bold mb-4">Todo List</h1>
             <TodoForm onAdd={fetchTodos} />
             <div className="mt-4">
                 {todos.map((todo) => (

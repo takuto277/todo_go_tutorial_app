@@ -1,12 +1,8 @@
-import { title } from "process";
+import { Todo } from '@/types/todo';
 
 const API_BASE_URL = 'http://localhost:8080';
 
-export interface Todo {
-    id: number;
-    title: string;
-    completed: boolean;
-}
+
 
 export const getTodos = async () => {
     const response = await fetch(`${API_BASE_URL}/todos`);

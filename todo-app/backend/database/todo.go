@@ -25,13 +25,17 @@ func createTable() {
 	query := `CREATE TABLE IF NOT EXISTS todos (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	title TEXT NOT NULL,
-	completed BOOLEAN DEFUALT FALSE,
-	created_at DETETIME,
+	description TEXT,
+	completed BOOLEAN DEFAULT FALSE,
+	created_at DATETIME,
 	updated_at DATETIME
 	);`
 
+	log.Printf("Creating table with query: %s", query)
+
 	_, err := DB.Exec(query)
 	if err != nil {
+		log.Printf("Error creating table: %v", err)
 		log.Fatal(err)
 	}
 

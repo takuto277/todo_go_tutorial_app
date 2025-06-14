@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -11,7 +12,7 @@ import (
 )
 
 func GetTodos(c *gin.Context) {
-	rows, err := database.DB.Query("SELECT id, title, completed, created_at, updated_at FROM todos")
+	rows, err := database.DB.Query("SELECT id, title, description, completed, created_at, updated_at FROM todos")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -23,7 +24,7 @@ func GetTodos(c *gin.Context) {
 		var todo models.Todo
 		var createdAt, updatedAt string
 
-		err = rows.Scan(&todo.ID, &todo.Title, &todo.Completed, &createdAt, &updatedAt)
+		err = rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &createdAt, &updatedAt)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -41,6 +42,7 @@ func GetTodos(c *gin.Context) {
 func CreateTodo(c *gin.Context) {
 	var newTodo models.Todo
 	if err := c.ShouldBindJSON(&newTodo); err != nil {
+		log.Printf("Error binding JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -48,20 +50,37 @@ func CreateTodo(c *gin.Context) {
 	newTodo.CreatedAt = time.Now()
 	newTodo.UpdatedAt = time.Now()
 
-	stmt, err := database.DB.Prepare("INSERT INTO todos(title, completed, created_at, updated_at) VALUES(?, ?, ?, ?)")
+	query := "INSERT INTO todos(title, description, completed, created_at, updated_at) VALUES(?, ?, ?, ?, ?)"
+	log.Printf("Executing query: %s", query)
+	log.Printf("Parameters: title=%s, description=%s, completed=%v", newTodo.Title, newTodo.Description, newTodo.Completed)
+
+	stmt, err := database.DB.Prepare(query)
 	if err != nil {
+		log.Printf("Error preparing statement: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(newTodo.Title, newTodo.Completed, newTodo.CreatedAt.Format(time.RFC3339), newTodo.UpdatedAt.Format(time.RFC3339))
+	result, err := stmt.Exec(
+		newTodo.Title,
+		newTodo.Description,
+		newTodo.Completed,
+		newTodo.CreatedAt.Format(time.RFC3339),
+		newTodo.UpdatedAt.Format(time.RFC3339),
+	)
 	if err != nil {
+		log.Printf("Error preparing statement: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	lastInsertId, _ := result.LastInsertId()
+	lastInsertId, err := result.LastInsertId()
+	if err != nil {
+		log.Printf("Error getting last insert ID: %v", err) // エラーログを追加
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	newTodo.ID = lastInsertId
 
 	c.JSON(http.StatusCreated, newTodo)
@@ -78,14 +97,14 @@ func UpdateTodo(c *gin.Context) {
 
 	todo.UpdatedAt = time.Now()
 
-	stmt, err := database.DB.Prepare("UPDATE todos SET title = ?, completed = ?, updated_at = ? WHERE id = ?")
+	stmt, err := database.DB.Prepare("UPDATE todos SET title = ?, description = ?, completed = ?, updated_at = ? WHERE id = ?")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(todo.Title, todo.Completed, todo.UpdatedAt.Format(time.RFC3339), id)
+	_, err = stmt.Exec(todo.Title, todo.Description, todo.Completed, todo.UpdatedAt.Format(time.RFC3339), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

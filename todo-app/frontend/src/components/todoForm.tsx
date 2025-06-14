@@ -8,6 +8,7 @@ interface TodoFormProps {
 
 export default function TodoForm({ onAdd }: TodoFormProps) {
     const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,9 +20,13 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ title }),
+                body: JSON.stringify({ 
+                    title,
+                    description
+                 }),
             });
             setTitle('');
+            setDescription('');
             onAdd();
         } catch (error) {
             console.error('Error adding todo:', error);
@@ -29,13 +34,20 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Add a new todo"
-                className="flex-1 p-2 border border-gray-300 rounded text-black"
+                className="w-full p-2 border border-gray-300 rounded text-black"
+            />
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add a new description"
+                className="w-full p-2 border border-gray-300 rounded text-black"
+                rows={3}
             />
             <button
                 type="submit"

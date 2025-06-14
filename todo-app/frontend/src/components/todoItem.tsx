@@ -11,7 +11,7 @@ interface TodoItemProps {
 export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
     const toggleComplete = async () => {
         try {
-            await fetch(`http://localhost:8080/todo/${todo.id}`, {
+            await fetch(`http://localhost:8080/todos/${todo.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
 
     const deleteTodo = async () => {
         try {
-            await fetch(`http:/localhost:8080/todo/${todo.id}`, {
+            await fetch(`http://localhost:8080/todos/${todo.id}`, {
                 method: 'DELETE',
             });
             onDelete();
@@ -47,7 +47,7 @@ export default function TodoItem({ todo, onUpdate, onDelete }: TodoItemProps) {
                     onChange={toggleComplete}
                     className="mr-2"
                 />
-                <span className={todo.completed ? 'line-through text-gray-500' : ''}>
+                <span className={todo.completed ? 'line-through text-gray-500' : 'text-black'}>
                     {todo.title}
                 </span>
             </div>
